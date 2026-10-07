@@ -112,7 +112,36 @@ def generate_orders():
                 "tracking_number": f"TRK{random.randint(100000000, 999999999)}",
                 "return_eligible": str(status == "delivered" and 
                                        (datetime.now() - order_date).days <= 30).lower()
-            })
+    # Fixed reference test orders expected by test suites and demo scenarios
+    fixed_orders = [
+        {
+            "customer_id": "CUST-001",
+            "order_id": "ORD-27176",
+            "product_name": "Wireless Headphones Pro",
+            "product_category": "Electronics",
+            "price": "149.99",
+            "quantity": "1",
+            "status": "delivered",
+            "order_date": (datetime.now() - timedelta(days=20)).strftime("%Y-%m-%d"),
+            "estimated_delivery": (datetime.now() - timedelta(days=15)).strftime("%Y-%m-%d"),
+            "tracking_number": "TRK271760001",
+            "return_eligible": "true",
+        },
+        {
+            "customer_id": "CUST-002",
+            "order_id": "ORD-28001",
+            "product_name": "Mechanical Keyboard",
+            "product_category": "Electronics",
+            "price": "89.99",
+            "quantity": "1",
+            "status": "delivered",
+            "order_date": (datetime.now() - timedelta(days=10)).strftime("%Y-%m-%d"),
+            "estimated_delivery": (datetime.now() - timedelta(days=5)).strftime("%Y-%m-%d"),
+            "tracking_number": "TRK280010002",
+            "return_eligible": "true",
+        },
+    ]
+    orders.extend(fixed_orders)
     return orders
 
 # ─────────────────────────────────────────────

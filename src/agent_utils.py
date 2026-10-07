@@ -38,6 +38,13 @@ def _enable_windows_ansi() -> None:
     """Enable ANSI VT-processing in the Windows console (no-op elsewhere)."""
     if sys.platform == 'win32':
         try:
+            if hasattr(sys.stdout, 'reconfigure'):
+                sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+            if hasattr(sys.stderr, 'reconfigure'):
+                sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+        except Exception:
+            pass
+        try:
             import ctypes
             ctypes.windll.kernel32.SetConsoleMode(
                 ctypes.windll.kernel32.GetStdHandle(-11), 7
@@ -102,7 +109,15 @@ def _trace_print(*args, **kwargs) -> None:
     double-processed by the proxy's line-rewriting logic.
     """
     kwargs.setdefault('file', _real_stdout)
-    print(*args, **kwargs)
+    try:
+        print(*args, **kwargs)
+    except UnicodeEncodeError:
+        enc = getattr(_real_stdout, 'encoding', 'ascii') or 'ascii'
+        safe_args = [
+            str(a).encode(enc, errors='replace').decode(enc)
+            for a in args
+        ]
+        print(*safe_args, **kwargs)
 
 
 # ─────────────────────────────────────────────────────
